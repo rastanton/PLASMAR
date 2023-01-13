@@ -5,7 +5,7 @@ from decimal import *
 getcontext().prec = 5
 import subprocess
 
-##Usage:> python Blast_Total_Alignment_Exe.py Blast_Glob query_fasta Output_File
+##Usage:> python Blast_Total_Single_Exe.py Blast_Glob query_fasta Output_File
 ##Requires ncbi-blast+
 
 def Max_Contig_Length(genome, contig_list):
