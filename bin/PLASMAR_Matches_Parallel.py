@@ -175,7 +175,7 @@ def Match_Line_Maker_3(assembly, plasmid, plasmid_line, AMR_gamma, PR_gamma, out
 
 def Multi_Match_Maker_Line_List(input_list):
     ID = input_list[1].split('\t')[0]
-    plasmid = '/scicomp/groups/OID/NCEZID/DHQP/PRB_AR/Rich_DIR/scripts//Plasmid_DB/' + ID
+    plasmid = Upper + '/databases/Plasmid_DB/' + ID
     assembly_name = input_list[0].split('/')[-1]
     output = assembly_name + '__' + ID
     Line = Match_Line_Maker_3(input_list[0], plasmid, input_list[1], input_list[2], input_list[3], output)
