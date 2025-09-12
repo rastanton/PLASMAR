@@ -128,7 +128,7 @@ def Report_Lines(AMR_GAMMA, PLASMAR, overlap_file, presence_file, ID):
         Lines.append(Line)
     for entry in CPs:
         if (entry in Scored_Matches) == False:
-            Line = ID + '\t' + entry + '\t0\tNo matching plasmids\tN/A\tN/A\tN/A\tNA/A\tN/A\tN\A'
+            Line = ID + '\t' + entry + '\t0\tNo matching plasmids\tN/A\tN/A\tN/A\tNA/A\tN/A\tN/A'
             Lines.append(Line)
     return Lines
             
