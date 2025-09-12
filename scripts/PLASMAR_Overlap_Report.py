@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 
 def CP_AMR_PR_GC_List_Maker(AMR_gamma, PR_gamma):

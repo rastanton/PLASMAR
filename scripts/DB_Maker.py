@@ -1,13 +1,12 @@
+#!/usr/bin/env python3
+
 import subprocess
+import os
 import sys
 import glob
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-
-###Takes in a file with entrez IDs and start positions and generates individual fastas with start positions
-###Usage: python Entrez_Multi_File_Exe.py All_CP_Plasmid_Info.txt
-##Written by: Rich Stanton (rstanton@cdc.gov/github.com/rastanton)
 
 def Entrez_Fasta_File(accession, fasta):
     subprocess.call('efetch -db nucleotide -id ' + accession + ' -mode text -format fasta > ' + fasta, shell=True)
@@ -60,11 +59,20 @@ def Circular_File(input_file):
         Start = int(line.split()[-1])
         Circular_Maker(ID, Start)
     f.close()
-    
-Entrez_Multi_File(sys.argv[1], 'PLASMAR_DB_')
+
+script_path = os.path.abspath(__file__)
+script_directory = os.path.dirname(script_path)
+Current = os.getcwd()
+Upper = os.path.dirname(script_directory)
+subprocess.call('mkdir ' + Upper + '/databases/Plasmid_DB', shell=True)
+os.chdir(Upper + '/databases/Plasmid_DB/')
+Entrez_Multi_File(Upper + '/databases/All_CP_Plasmid_Info.txt', 'PLASMAR_DB_')
 
 List1 = glob.glob('PLASMAR_DB_*.fasta')
 for file in List1:
     Contig_Writer_All(file)
     
-Circular_File(sys.argv[1])
+subprocess.call('rm PLASMAR_DB_*.fasta', shell=True)    
+Circular_File(Upper + '/databases/All_CP_Plasmid_Info.txt')
+os.chdir(Current)
+
