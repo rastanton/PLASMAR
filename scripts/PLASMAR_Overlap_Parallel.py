@@ -522,9 +522,9 @@ def Pair_Maker(input_list):
             Pairs.append([input_list[entry], input_list[entry2]])
     return Pairs
 
-def Comp_Maker_Pool_Folder(P10_Folder, PSL_Folder, output_file):
+def Comp_Maker_Pool_Folder(PLASMAR_Matches_Folder, PSL_Folder, output_file):
     Pair_List = []
-    List1 = glob.glob(P10_Folder + '/*_Matches_Prob.txt')
+    List1 = glob.glob(PLASMAR_Matches_Folder + '/*_Matches_Prob.txt')
     Inputs = Pair_Maker(List1)
     for entry in Inputs:
         Pair_List.append([entry[0], entry[1], PSL_Folder])
@@ -545,35 +545,45 @@ def Array_Maker(input_list):
 def Array_Maker_Plasmar_Float(input_file, start, stop):
     """Makes an array from an input Plasmar for positions given"""
     List1 = []
+    Y_list = []
     f = open(input_file, 'r')
     String1 = f.readline()
     for line in f:
         Line_List = line[0:-1].split('\t')
         Line = []
-        for entry in Line_List[start:stop]:
-            Line.append(float(entry))
-        List1.append(Line)
+        Y = 0
+        if len(Line_List) > stop:
+            for entry in Line_List[start:stop]:
+                Line.append(float(entry))
+            List1.append(Line)
+            Y = 1
+        Y_list.append(Y)
     f.close()
     Out = Array_Maker(List1)
-    return Out
+    return Out, Y_list
 
 def Array_Maker_Positions(input_PLASMAR_scores, pos_list):
     X_list = []
+    Y_list = []
     f = open(input_PLASMAR_scores, 'r')
     String1 = f.readline()
     for line in f:
         List1 = line.split()
         X_line = List1
         X_correct = []
-        for entry in range(len(X_line)):
-            if (entry in pos_list):
-                X_correct.append(float(X_line[entry]))
-        X_list.append(X_correct)
+        Y = 0
+        if len(X_line) > max(pos_list):
+            for entry in range(len(X_line)):
+                if (entry in pos_list):
+                    X_correct.append(float(X_line[entry]))
+            X_list.append(X_correct)
+            Y = 1
+        Y_list.append(Y)
     f.close()
     Out = []
     X_data = Array_Maker(X_list)
     Out = X_data
-    return Out
+    return Out, Y_list
 
 def PLASMAR_Single_Line_List(input_plasmar):
     Out = []
@@ -593,24 +603,30 @@ def GZ_Pickle(input_pickle):
 def Overlap_Pickle_Scored_Combined(PLASMAR, all_model, float_model):
     """Takes in an X and y array and generates a file with the predicted values based on an input training set and unknown data"""
     Pos = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 31, 32, 33, 34, 35, 36]
-    Float_Array = Array_Maker_Positions(PLASMAR, Pos)
-    Array = Array_Maker_Plasmar_Float(PLASMAR, 3, 37)
-    Lines = PLASMAR_Single_Line_List(PLASMAR)
-    All_model = GZ_Pickle(all_model)
-    Float_model = GZ_Pickle(float_model)
-    All_Predictions = []
-    Float_Predictions = []
-    All_Data = All_model.predict_proba(Array)
-    Float_Data = Float_model.predict_proba(Float_Array)
-    All_Predictions.append(All_Data)
-    Float_Predictions.append(Float_Data)
-    for entry in range(len(Lines)):
-        Lines[entry][-1] = float(Lines[entry][-1])
-        Lines[entry].append(All_Predictions[0][entry][1])
-        Lines[entry].append(Float_Predictions[0][entry][1])
-        Best = max(Lines[entry][-3:])
-        Lines[entry].append(Best)
-    Lines.sort(key=operator.itemgetter(-1), reverse=True)
+    Float_Array, Y_Float = Array_Maker_Positions(PLASMAR, Pos)
+    Array, Y_Array = Array_Maker_Plasmar_Float(PLASMAR, 3, 37)
+    Lines = []
+    if len(Array) > 0:
+        Lines_All = PLASMAR_Single_Line_List(PLASMAR)
+        Lines = []
+        for entry in range(len(Y_Float)):
+            if Y_Float[entry] == 1:
+                Lines.append(Lines_All[entry])    
+        All_model = GZ_Pickle(all_model)
+        Float_model = GZ_Pickle(float_model)
+        All_Predictions = []
+        Float_Predictions = []
+        All_Data = All_model.predict_proba(Array)
+        Float_Data = Float_model.predict_proba(Float_Array)
+        All_Predictions.append(All_Data)
+        Float_Predictions.append(Float_Data)
+        for entry in range(len(Lines)):
+            Lines[entry][-1] = float(Lines[entry][-1])
+            Lines[entry].append(All_Predictions[0][entry][1])
+            Lines[entry].append(Float_Predictions[0][entry][1])
+            Best = max(Lines[entry][-3:])
+            Lines[entry].append(Best)
+        Lines.sort(key=operator.itemgetter(-1), reverse=True)
     f = open(PLASMAR, 'r')
     String1 = f.readline()
     Cats = String1[0:-1]
@@ -627,5 +643,5 @@ script_path = os.path.abspath(__file__)
 script_directory = os.path.dirname(script_path)
 Upper = os.path.dirname(script_directory)
 
-Comp_Maker_Pool_Folder('P10/', 'PSL/', 'Overlap_Comp.txt')
+Comp_Maker_Pool_Folder('PLASMAR_Matches/', 'PSL/', 'Overlap_Comp.txt')
 Overlap_Pickle_Scored_Combined('Overlap_Comp.txt', Upper + '/models/PLASMAR_Overlap_All_ET_SKL_1.6.1.pkl.gz', Upper + '/models/PLASMAR_Overlap_Float_ET_SKL_1.6.1.pkl.gz')

@@ -85,7 +85,7 @@ def PLASMAR_Scorer(condensed_data, Model):
 
 def PLASMAR_Condenser_glob(Model_Pickle, output_file):
     Model = GZ_Pickle(Model_Pickle)
-    List1 = glob.glob('P10/*Prob.txt')
+    List1 = glob.glob('PLASMAR_Matches/*Prob.txt')
     Out = open(output_file, 'w')
     Out.write('ID\tCarbapenemase\tPlasmid_Prob\n')
     for entry in List1:

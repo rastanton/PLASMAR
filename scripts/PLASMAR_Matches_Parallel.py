@@ -542,7 +542,7 @@ def Plasmid_Match_Finder_4_Line(AMR_gamma, PR_gamma, plasmid_line):
     Matches = [CP_Match, AMR_Match, PR_Match]
     return Matches
 
-def Plasmid_Match_Finder_5(AMR_gamma, PR_gamma, plasmid_file):
+def Plasmid_Match_Finder_5(AMR_gamma, PR_gamma, plasmid_file, run_matches):
     """Eliminates the AMR alignment requirement"""
     Info = CP_AMR_PR_List_Maker(AMR_gamma, PR_gamma)
     Matches = []
@@ -557,9 +557,14 @@ def Plasmid_Match_Finder_5(AMR_gamma, PR_gamma, plasmid_file):
         CP_Match = List_Match_Percent(CP, Info[0])
         AMR_Match = List_Match_Percent(AMR, Info[1])
         PR_Match = List_Match_Percent(PR, Info[2])
-        if CP_Match == 1 and PR_Match > 0 and (AMR_Match > 0 or AMR == ['']):
-            line = line + '\t' + str(CP_Match) + '\t' + str(AMR_Match) + '\t' + str(PR_Match)
-            Matches.append(line)
+        if run_matches == 0:
+            if CP_Match == 1 and PR_Match > 0 and (AMR_Match > 0 or AMR == ['']):
+                line = line + '\t' + str(CP_Match) + '\t' + str(AMR_Match) + '\t' + str(PR_Match)
+                Matches.append(line)
+        elif run_matches == 1:
+            if CP_Match == 1:
+                line = line + '\t' + str(CP_Match) + '\t' + str(AMR_Match) + '\t' + str(PR_Match)
+                Matches.append(line)
     return Matches
 
 def Plasmid_Match_Finder_Test(AMR_gamma, PR_gamma, plasmid_file):
@@ -603,8 +608,8 @@ def CP_AMR_PR_List_Maker(AMR_gamma, PR_gamma):
     f.close()
     return Out
 
-def Plasmid_Report_Maker_4(assembly, AMR_gamma, PR_gamma, plasmid_file, output_file):
-    Plasmid_List = Plasmid_Match_Finder_5(AMR_gamma, PR_gamma, plasmid_file)
+def Plasmid_Report_Maker_4(assembly, AMR_gamma, PR_gamma, plasmid_file, output_file, run_matches):
+    Plasmid_List = Plasmid_Match_Finder_5(AMR_gamma, PR_gamma, plasmid_file, run_matches)
     Multi_Match_Maker_Parallel(assembly, Plasmid_List, AMR_gamma, PR_gamma, output_file)
 
 def Array_Maker(input_list):
@@ -665,13 +670,14 @@ script_path = os.path.abspath(__file__)
 script_directory = os.path.dirname(script_path)
 Upper = os.path.dirname(script_directory)
 subprocess.call('mkdir PSL', shell=True)
-subprocess.call('mkdir P10', shell=True)
+subprocess.call('mkdir PLASMAR_Matches', shell=True)
+run_matches = sys.argv[1]
 
 List1 = glob.glob('*.fasta')
 for entry in List1:
     AMR = 'AMR/' + entry[0:-6] + '_AMR.gamma'
     Reps = 'PR/' + entry[0:-6] + '_PR.gamma'
-    Plasmar = 'P10/' + entry[0:-6] + '_Matches.txt'
-    Plasmid_Report_Maker_4(entry, AMR, Reps, Upper + '/databases/All_CP_Plasmid_Info.txt', Plasmar)
+    Plasmar = 'PLASMAR_Matches/' + entry[0:-6] + '_Matches.txt'
+    Plasmid_Report_Maker_4(entry, AMR, Reps, Upper + '/databases/All_CP_Plasmid_Info.txt', Plasmar, int(run_matches))
     RF_Strat_Kfold_Predictions_single_Pickle_Scored(Plasmar, Upper + '/models/PLASMAR_Match_Val_SKL_1.6.1.pkl.gz')
  

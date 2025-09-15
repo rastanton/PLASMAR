@@ -138,7 +138,7 @@ def Report_Glob(input_folder):
     Out.write('ID\tCarbapenemase\tDatabase Matches\tClosest Plasmid\tClosest Plasmid AR Genes\tClosest Plasmid Replicons\tClosest Plasmid Length (bp)\tClosest Plasmid Score\tCarbapenemase Plasmid Presence Score\tOverlaps > 0.2\n')
     for entry in List1:
         Name = entry.split('/')[-1][0:-6]
-        Lines = Report_Lines(input_folder + '/AMR/' + Name + '_AMR.gamma', input_folder + '/P10/' + Name + '_Matches_Prob.txt', input_folder + '/Overlap_Comp_Report.txt',
+        Lines = Report_Lines(input_folder + '/AMR/' + Name + '_AMR.gamma', input_folder + '/PLASMAR_Matches/' + Name + '_Matches_Prob.txt', input_folder + '/Overlap_Comp_Report.txt',
                              input_folder + '/Plasmid_Presence.txt', Name)
         for line in Lines:
             Out.write(line + '\n')
