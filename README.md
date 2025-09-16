@@ -3,7 +3,20 @@
 
 PLASMAR (plasmid-like assembly sequence matching algorithm for resistance) is a bioinformatic tool that determines potential matches to antimicrobial resistant (AMR) carbapenemase-encoding plasmids (CEPs) from short read bacteria assemblies. It identifies a set of possible CEP matches based on shared AMR genes and plasmid replicons, and then incorporates machine learning models to estimate the probability that assemblies carry known CEPs and also if multiple assemblies carry the same CEPs.
 
-**Setup:**
+**Quick Installation via Conda:**
+
+PLASMAR (and all the dependencies) can be installed via Conda:
+```
+conda install -c conda-forge -c bioconda -c defaults plasmar
+```
+
+Run the PLASMAR.py script to see usage:
+```
+PLASMAR.py -h
+```
+If you download directly via Git, PLASMAR requires Python >=3.11, GAMMA (github.com/rastanton/GAMMA), NumPy >=1.25 (numpy.org), scikit-learn v.1.6.1 (scikit-learn.org), Entrez Direct (ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/versions/current/), and Matplotlib (matplotlib.org), all of which have to be in your $PATH.
+
+**Initial Setup:**
 
 Before running the first time, the plasmid database must be built using this command:
 ```
