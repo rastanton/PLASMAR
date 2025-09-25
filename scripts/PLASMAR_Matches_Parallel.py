@@ -648,22 +648,30 @@ def GZ_Pickle(input_pickle):
 
 def RF_Strat_Kfold_Predictions_single_Pickle_Scored(PLASMAR, model):
     """Takes in an X and y array and generates a file with the predicted values based on an input training set and unknown data"""
-    X_Test_Set = []
-    Array = Array_Maker_Plasmar_Float(PLASMAR, 6, 22)
-    Lines = PLASMAR_Single_Line_List(PLASMAR)
-    rf_model = GZ_Pickle(model)
-    Predictions = []
-    Data = rf_model.predict_proba(Array)
-    Predictions.append(Data)
-    for entry in range(len(Lines)):
-        Lines[entry].append(Predictions[0][entry][1])
-    Lines.sort(key=operator.itemgetter(24), reverse=True)
-    Out = open(PLASMAR[0:-4] + '_Prob.txt', 'w')
-    Out.write('Assembly\tPlasmid\tLength\tCP\tAMR\tPR\tCP%\tAMR%\tPR%\tCP_Contig%\tAMR_Contig%\tPR_Contig%\tMax_Contig_Match\t%Max_Contig\t%_Match\t%_Overlap\t%Weighted_Match\tMax_Match\tTotal_Match\tTotal_Match_Length\tPlasmid_Length\tMax_Overlap_%\tCP_PR_Contig_%\tAR_PR_Contig_%\tProbability\n')
-    for line in Lines:
-        Line = '\t'.join(line[0:-1])
-        Out.write(Line + '\t' + str(line[-1]) + '\n')
-    Out.close()
+    f = open(PLASMAR, 'r')
+    String1 = f.readline()
+    String1 = f.readline()
+    f.close()
+    if String1 == '':
+        Out = open(PLASMAR[0:-4] + '_Prob.txt', 'w')
+        Out.write('Assembly\tPlasmid\tLength\tCP\tAMR\tPR\tCP%\tAMR%\tPR%\tCP_Contig%\tAMR_Contig%\tPR_Contig%\tMax_Contig_Match\t%Max_Contig\t%_Match\t%_Overlap\t%Weighted_Match\tMax_Match\tTotal_Match\tTotal_Match_Length\tPlasmid_Length\tMax_Overlap_%\tCP_PR_Contig_%\tAR_PR_Contig_%\tProbability\n')
+        Out.close()
+    else:
+        Array = Array_Maker_Plasmar_Float(PLASMAR, 6, 22)
+        Lines = PLASMAR_Single_Line_List(PLASMAR)
+        rf_model = GZ_Pickle(model)
+        Predictions = []
+        Data = rf_model.predict_proba(Array)
+        Predictions.append(Data)
+        for entry in range(len(Lines)):
+            Lines[entry].append(Predictions[0][entry][1])
+        Lines.sort(key=operator.itemgetter(24), reverse=True)
+        Out = open(PLASMAR[0:-4] + '_Prob.txt', 'w')
+        Out.write('Assembly\tPlasmid\tLength\tCP\tAMR\tPR\tCP%\tAMR%\tPR%\tCP_Contig%\tAMR_Contig%\tPR_Contig%\tMax_Contig_Match\t%Max_Contig\t%_Match\t%_Overlap\t%Weighted_Match\tMax_Match\tTotal_Match\tTotal_Match_Length\tPlasmid_Length\tMax_Overlap_%\tCP_PR_Contig_%\tAR_PR_Contig_%\tProbability\n')
+        for line in Lines:
+            Line = '\t'.join(line[0:-1])
+            Out.write(Line + '\t' + str(line[-1]) + '\n')
+        Out.close()
     subprocess.call('rm ' + PLASMAR, shell=True)
 
 script_path = os.path.abspath(__file__)
