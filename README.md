@@ -1,4 +1,6 @@
 # PLASMAR
+**SHARE IT Act Compliance:**
+
 Organization: CDC/NCEZID/DHQP/PRB
 
 Contact email: ncezid_shareit@cdc.gov
@@ -6,6 +8,9 @@ Contact email: ncezid_shareit@cdc.gov
 Description: PLASMAR (plasmid-like assembly sequence matching algorithm for resistance) is a bioinformatic tool that determines potential matches to antimicrobial resistant (AMR) carbapenemase-encoding plasmids (CEPs) from short read bacteria assemblies. It identifies a set of possible CEP matches based on shared AMR genes and plasmid replicons, and then incorporates machine learning models to estimate the probability that assemblies carry known CEPs and also if multiple assemblies carry the same CEPs.
 
 Languages: Python
+
+Purpose of the SHARE IT Act:
+The SHARE IT Act is a federal law that says government agencies like CDC must be more transparent about the software we build using federal funds. It CDC publishes a public list that describes what custom-developed software we’ve created. This helps other agencies know what exists so we’re not reinventing the wheel.
 
 **Introduction:**
 
